@@ -1,5 +1,5 @@
 import argparse
-from .server import Server
+from coral_detection_service.server import Server
 
 PATH_DELIM = ';'
 ENCODING_FNS = {'score_threshold': float,
@@ -85,4 +85,8 @@ arg_params = {'detection_params': detection_params,
               'detect': args.detect,
               'model': args.model,
               'labels': args.labels}
+
+for arg in vars(args):
+    print(f'{arg}: {getattr(args, arg)}')
+
 Server().run(addr=args.address, port=args.port, arg_params=arg_params)
