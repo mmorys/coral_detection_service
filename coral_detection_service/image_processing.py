@@ -14,7 +14,7 @@ DRAW_BOXES = False
 
 
 def load_model_interpreter(model):
-    abs_model_path = pathlib.Path(model).absolute().as_posix()
+    abs_model_path = _relative_path(model)
     interpreter = make_interpreter(abs_model_path)
     interpreter.allocate_tensors()
     return interpreter
@@ -131,7 +131,8 @@ def coral_object_detection(img, model=None, labels=None, interpreter=None, thres
 
     if interpreter is None:
         interpreter = load_model_interpreter(model)
-    labels = read_label_file(labels) if labels else {}
+
+    labels = read_label_file(_relative_path(labels)) if labels else {}
 
     objects_by_label = dict()
     img_size = img.size
@@ -195,6 +196,9 @@ def draw_detection_boxes(image, objects_by_label):
     if DEBUG_SHOW_IMAGE:
         image.show()
     return image
+
+def _relative_path(pth):
+    return pathlib.Path(__file__).parent.joinpath(pth).absolute().as_posix()
 
 def compute(image, detection_params={}, detect='', **kwargs):
     try:
