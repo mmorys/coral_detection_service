@@ -90,7 +90,7 @@ class ProcessingRequestBaseHandler(BaseHTTPRequestHandler):
         if path_string:
             path_encoding_fns = getattr(self, 'path_encoding_fns', path_encoding_fns)
             path_delim = getattr(self, 'path_delim', path_delim)
-            kwarg_pairs = [tuple(k.split('=')) for k in string.split(path_delim)]
+            kwarg_pairs = [tuple(k.split('=')) for k in path_string.split(path_delim)]
 
             for key, value in kwarg_pairs:
                 try:

@@ -196,11 +196,11 @@ def draw_detection_boxes(image, objects_by_label):
         image.show()
     return image
 
-def compute(image, detection_parameters={}, detect='', **kwargs):
+def compute(image, detection_params={}, detect='', **kwargs):
     try:
         # Process PIL Image here
         image = image if isinstance(image, Image.Image) else Image.open(input).convert('RGB')
-        objects_by_label = coral_object_detection(image, model=kwargs['model'], labels=kwargs['labels'], interpreter=kwargs.get('interpreter', None), **detection_parameters)
+        objects_by_label = coral_object_detection(image, model=kwargs['model'], labels=kwargs['labels'], interpreter=kwargs.get('interpreter', None), **detection_params)
         if detect:
             objects_by_label = filter_labels_of_interest(objects_by_label, detect)
         predictions = detection_dict_to_list(objects_by_label)
