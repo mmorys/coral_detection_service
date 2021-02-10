@@ -8,4 +8,10 @@ Install using pip:
 ```pip install git+https://github.com/mmorys/coral_detection_service.git```
 
 #Usage
-Run server from terminal using the command `coral-server`
+Run server from terminal using the command
+
+`coral-serve`
+
+For help on command line arguments, run 
+
+`coral-serve --help`
