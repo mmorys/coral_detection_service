@@ -5,7 +5,7 @@ This project requires a Coral TPU to run. Install the Coral TPU drivers as descr
 ## Install
 Install using pip:
 
-```pip install git+https://github.com/mmorys/coral_detection_service.git```
+```pip install --extra-index-url https://google-coral.github.io/py-repo/ git+https://github.com/mmorys/coral_detection_service.git```
 
 #Usage
 Run server from terminal using the command

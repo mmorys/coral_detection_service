@@ -17,7 +17,6 @@ setup(
     install_requires=['numpy',
                       'pillow',
                       'pycoral'],
-    dependency_links=['https://google-coral.github.io/py-repo/'],
     package_data={'coral_detection_service': ['models/*.txt', 'models/*.tflite']},
     include_package_data=True,
     keywords=['python', 'coral']
