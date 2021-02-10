@@ -3,7 +3,13 @@ import cgi
 import json
 from PIL import Image
 import io
+from copy import deepcopy
 from .image_processing import compute, load_model_interpreter
+
+ENCODING_FNS = {'threshold': float,
+                'overlap': int,
+                'iou': float,
+                'sizes': str}
 
 class ProcessingRequestBaseHandler(BaseHTTPRequestHandler):
 
@@ -33,21 +39,22 @@ class ProcessingRequestBaseHandler(BaseHTTPRequestHandler):
         image = self._extract_image_from_post()
         if image:
             try:
-                compute_params = self.arg_params
+                compute_params = deepcopy(self.arg_params)
             except AttributeError:
                 return_data = self._format_results_dict()
             else:
                 detection_params = compute_params.pop('detection_params')
-                post_kwargs = self._parse_path_kwargs(self.path.lstrip('/'))
+                post_kwargs = self._parse_path_kwargs(self.path.lstrip('/'), path_encoding_fns=ENCODING_FNS)
                 detection_params.update(post_kwargs)
                 compute_params.update(post_kwargs)
 
                 if not self.__class__.model_interpreter:
-                    self.__class__.model_interpreter = load_model_interpreter(compute_params.model)
+                    self.__class__.model_interpreter = load_model_interpreter(compute_params['model'])
 
                 return_data = compute(image=image, interpreter=self.__class__.model_interpreter, detection_params=detection_params, **compute_params)
         else:
-            return_data = self._format_results_dict()
+            return_data = None
+        return_data = self._format_results_dict(return_data)
         self._set_headers(return_data)
         self.wfile.write(return_data)
 
@@ -78,16 +85,18 @@ class ProcessingRequestBaseHandler(BaseHTTPRequestHandler):
                 return None
         return image
 
-    def _parse_path_kwargs(self, string, path_encoding_fns={}, path_delim=';'):
-        path_encoding_fns = getattr(self, 'path_encoding_fns', path_encoding_fns)
-        path_delim = getattr(self, 'path_delim', path_delim)
-        kwarg_pairs = [tuple(k.split('=')) for k in string.split(path_delim)]
+    def _parse_path_kwargs(self, path_string, path_encoding_fns={}, path_delim=';'):
         kwargs = {}
-        for key, value in kwarg_pairs:
-            try:
-                kwargs[key] = path_encoding_fns[key](value)
-            except:
-                kwargs[key] = value
+        if path_string:
+            path_encoding_fns = getattr(self, 'path_encoding_fns', path_encoding_fns)
+            path_delim = getattr(self, 'path_delim', path_delim)
+            kwarg_pairs = [tuple(k.split('=')) for k in string.split(path_delim)]
+
+            for key, value in kwarg_pairs:
+                try:
+                    kwargs[key] = path_encoding_fns[key](value)
+                except:
+                    kwargs[key] = value
         return kwargs
 
 
