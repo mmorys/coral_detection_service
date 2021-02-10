@@ -13,6 +13,7 @@ setup(
     description=DESCRIPTION,
     packages=find_packages(),
     entry_points={'console_scripts': ['coral-serve = coral_detection_service.coral_detection_launcher:main']},
+    python_requires='>=3.5',
     install_requires=['numpy',
                       'pillow',
                       'pycoral'],
