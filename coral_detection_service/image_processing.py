@@ -9,11 +9,8 @@ from pycoral.utils.dataset import read_label_file
 from pycoral.utils.edgetpu import make_interpreter
 
 Object = collections.namedtuple('Object', ['label', 'score', 'bbox'])
-LABELS_OF_INTEREST = ['person', 'dog']
-DEBUG_SHOW_IMAGE = True
-DRAW_BOXES = True
-
-AI_LABELS = pathlib.Path('./models/ssd_mobilenet_v2_labels.txt').absolute().as_posix()
+DEBUG_SHOW_IMAGE = False
+DRAW_BOXES = False
 
 
 def load_model_interpreter(model):
