@@ -12,12 +12,12 @@ setup(
     author_email="<marcin.m.morys@gmail.com>",
     description=DESCRIPTION,
     packages=find_packages(),
+    entry_points={'console_scripts': ['coral_server = coral_detection_service.coral_detection_launcher:main']},
     install_requires=['numpy',
                       'pillow',
                       'pycoral'],
     dependency_links=['https://google-coral.github.io/py-repo/'],
     package_data={'coral_detection_service': ['models/*.txt', 'models/*.tflite']},
     include_package_data=True,
-    scripts=['bin/detection_server.py'],
     keywords=['python', 'coral']
 )
