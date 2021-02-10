@@ -1,7 +1,7 @@
 import argparse
 from coral_detection_service.server import Server
 
-def main():
+def coral_serve():
     parser = argparse.ArgumentParser(description="Run a simple HTTP server")
     parser.add_argument(
         "-m",

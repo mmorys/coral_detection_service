@@ -12,7 +12,7 @@ setup(
     author_email="<marcin.m.morys@gmail.com>",
     description=DESCRIPTION,
     packages=find_packages(),
-    entry_points={'console_scripts': ['coral-serve = coral_detection_service.coral_detection_launcher:main']},
+    entry_points={'console_scripts': ['coral-serve = coral_detection_service.coral_detection_launcher:coral_serve']},
     python_requires='>=3.5',
     install_requires=['numpy',
                       'pillow',

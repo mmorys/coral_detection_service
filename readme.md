@@ -1,6 +1,7 @@
 #Installation
 ## Prerequisites
 This project requires a Coral TPU to run. Install the Coral TPU drivers as described [here](https://coral.ai/docs/accelerator/get-started/).
+This project was developed in Python 3.7, and this is the recommended Python version.
 
 ## Install
 Install using pip:
