@@ -15,8 +15,11 @@ DRAW_BOXES = False
 
 def load_model_interpreter(model):
     abs_model_path = _relative_path(model)
-    interpreter = make_interpreter(abs_model_path)
-    interpreter.allocate_tensors()
+    try:
+        interpreter = make_interpreter(abs_model_path)
+        interpreter.allocate_tensors()
+    except ValueError as e:
+        raise e(f'Failed to load interpreter model from path {abs_model_path}')
     return interpreter
 
 def tiles_location_gen(img_size, tile_size, overlap):
