@@ -15,8 +15,8 @@ setup(
     entry_points={'console_scripts': ['coral-serve = coral_detection_service.coral_detection_launcher:coral_serve']},
     python_requires='>=3.5',
     install_requires=['numpy',
-                      'pillow',
-                      'pycoral'],
+                      'pillow'],
+    extras_require={'coral': ['pycoral']},
     package_data={'coral_detection_service': ['models/*.txt', 'models/*.tflite']},
     include_package_data=True,
     keywords=['python', 'coral']

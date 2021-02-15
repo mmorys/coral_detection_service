@@ -4,7 +4,13 @@ import json
 from PIL import Image
 import io
 from copy import deepcopy
-from .image_processing import compute, load_model_interpreter
+try:
+    from .image_processing import compute, load_model_interpreter
+    PYCORAL_INSTALLED = True
+except ImportError:
+    PYCORAL_INSTALLED = False
+    import warnings
+    warnings.warn('pycoral not imported. Is pycoral package installed? Running in basic server mode for server debugging purposes only.')
 
 ENCODING_FNS = {'threshold': float,
                 'overlap': int,
@@ -38,21 +44,27 @@ class ProcessingRequestBaseHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         image = self._extract_image_from_post()
         if image:
-            try:
-                compute_params = deepcopy(self.arg_params)
-            except AttributeError:
-                return_data = self._format_results_dict()
+            if PYCORAL_INSTALLED:
+                try:
+                    compute_params = deepcopy(self.arg_params)
+                except AttributeError:
+                    return_data = self._format_results_dict()
+                else:
+                    detection_params = compute_params.pop('detection_params')
+                    post_kwargs = self._parse_path_kwargs(self.path, path_encoding_fns=ENCODING_FNS)
+                    detection_params.update(post_kwargs)
+                    compute_params.update(post_kwargs)
+
+                    if not self.__class__.model_interpreter:
+                        self.__class__.model_interpreter = load_model_interpreter(compute_params['model'])
+
+                    return_data = compute(image=image, interpreter=self.__class__.model_interpreter, detection_params=detection_params, **compute_params)
             else:
-                detection_params = compute_params.pop('detection_params')
-                post_kwargs = self._parse_path_kwargs(self.path.lstrip('/'), path_encoding_fns=ENCODING_FNS)
-                detection_params.update(post_kwargs)
-                compute_params.update(post_kwargs)
-
-                if not self.__class__.model_interpreter:
-                    self.__class__.model_interpreter = load_model_interpreter(compute_params['model'])
-
-                return_data = compute(image=image, interpreter=self.__class__.model_interpreter, detection_params=detection_params, **compute_params)
+                return_data = None
+                print(f'Path: {self.path}')
+                print(f'Image: {image}')
         else:
+            print(f'No image data in message')
             return_data = None
         return_data = self._format_results_dict(return_data)
         self._set_headers(return_data)
@@ -90,7 +102,7 @@ class ProcessingRequestBaseHandler(BaseHTTPRequestHandler):
         if path_string:
             path_encoding_fns = getattr(self, 'path_encoding_fns', path_encoding_fns)
             path_delim = getattr(self, 'path_delim', path_delim)
-            kwarg_pairs = [tuple(k.split('=')) for k in path_string.split(path_delim)]
+            kwarg_pairs = [tuple(k.split('=')) for k in path_string.replace('/',path_delim).split(path_delim) if '=' in k]
 
             for key, value in kwarg_pairs:
                 try:
