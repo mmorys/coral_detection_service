@@ -18,8 +18,8 @@ def load_model_interpreter(model):
     try:
         interpreter = make_interpreter(abs_model_path)
         interpreter.allocate_tensors()
-    except ValueError as e:
-        raise e(f'Failed to load interpreter model from path {abs_model_path}')
+    except ValueError:
+        raise ValueError(f'Failed to load interpreter model from path {abs_model_path}')
     return interpreter
 
 def tiles_location_gen(img_size, tile_size, overlap):
